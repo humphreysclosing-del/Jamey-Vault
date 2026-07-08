@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #0A0B0D; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; color: #ECEDEE; }
+  a { color: #D4A855; text-decoration: none; }
+  a:hover { color: #E8C179; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 8px; border: 2px solid #0A0B0D; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  input, select, textarea { font-family: 'Inter', sans-serif; }
+  input::placeholder, textarea::placeholder { color: #5A606B; }
+  select option { background: #131519; color: #ECEDEE; }
+  @keyframes jvFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  @keyframes jvPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  @media print {
+    body * { visibility: hidden; }
+    #invoicePrint, #invoicePrint * { visibility: visible; }
+    #invoicePrint { position: fixed; inset: 0; margin: 0; box-shadow: none !important; border: none !important; }
+  }
+</style>
+</helmet>
+
+<template id="__bundler_thumbnail">
+  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" fill="#0A0B0D"/>
+    <rect x="30" y="30" width="40" height="40" rx="9" fill="#131519" stroke="#D4A855" stroke-width="2"/>
+    <text x="50" y="56" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#D4A855" text-anchor="middle">JV</text>
+  </svg>
+</template>
+
+<div style="display:flex; min-height:100vh; background:#0A0B0D;">
+
+  <!-- SIDEBAR -->
+  <aside style="width:248px; flex-shrink:0; background:#0C0D10; border-right:1px solid rgba(255,255,255,0.06); display:flex; flex-direction:column; position:sticky; top:0; height:100vh;">
+    <div style="padding:26px 24px 22px;">
+      <div style="font-size:15px; font-weight:700; letter-spacing:0.14em; color:#F5F5F7;">JAMEY <span style="color:#D4A855;">//</span> VAULT</div>
+      <div style="font-size:10.5px; letter-spacing:0.16em; color:#5A606B; margin-top:5px; text-transform:uppercase;">Persoonlijke CFO</div>
+    </div>
+
+    <nav style="flex:1; padding:6px 14px; display:flex; flex-direction:column; gap:2px; overflow-y:auto;">
+      <a href="#" onClick="{{ nav.dashboard }}" style="{{ navStyle.dashboard }}"><span style="width:8px; height:8px; border-radius:2px; background:#D4A855; opacity:{{ navDot.dashboard }};"></span>Dashboard</a>
+      <a href="#" onClick="{{ nav.income }}" style="{{ navStyle.income }}"><span style="width:8px; height:8px; border-radius:2px; background:#3ECF8E; opacity:{{ navDot.income }};"></span>Inkomsten</a>
+      <a href="#" onClick="{{ nav.expenses }}" style="{{ navStyle.expenses }}"><span style="width:8px; height:8px; border-radius:2px; background:#E5676D; opacity:{{ navDot.expenses }};"></span>Uitgaven</a>
+      <a href="#" onClick="{{ nav.business }}" style="{{ navStyle.business }}"><span style="width:8px; height:8px; border-radius:2px; background:#6AA9E5; opacity:{{ navDot.business }};"></span>Bedrijven</a>
+      <a href="#" onClick="{{ nav.clients }}" style="{{ navStyle.clients }}"><span style="width:8px; height:8px; border-radius:2px; background:#8A8F98; opacity:{{ navDot.clients }};"></span>Klanten</a>
+      <a href="#" onClick="{{ nav.invoices }}" style="{{ navStyle.invoices }}"><span style="width:8px; height:8px; border-radius:2px; background:#D4A855; opacity:{{ navDot.invoices }};"></span>Facturen</a>
+      <a href="#" onClick="{{ nav.goals }}" style="{{ navStyle.goals }}"><span style="width:8px; height:8px; border-radius:2px; background:#3ECF8E; opacity:{{ navDot.goals }};"></span>Doelen</a>
+      <a href="#" onClick="{{ nav.networth }}" style="{{ navStyle.networth }}"><span style="width:8px; height:8px; border-radius:2px; background:#D4A855; opacity:{{ navDot.networth }};"></span>Nettovermogen</a>
+      <a href="#" onClick="{{ nav.cashflow }}" style="{{ navStyle.cashflow }}"><span style="width:8px; height:8px; border-radius:2px; background:#3ECF8E; opacity:{{ navDot.cashflow }};"></span>Cashflow</a>
+      <a href="#" onClick="{{ nav.settings }}" style="{{ navStyle.settings }}"><span style="width:8px; height:8px; border-radius:2px; background:#8A8F98; opacity:{{ navDot.settings }};"></span>Instellingen</a>
+    </nav>
+
+    <div style="padding:14px; border-top:1px solid rgba(255,255,255,0.06);">
+      <div style="display:flex; align-items:center; gap:8px; background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:10px; padding:9px 11px;">
+        <span style="color:#5A606B; font-size:13px;">⌕</span>
+        <input value="{{ search }}" onInput="{{ onSearch }}" placeholder="Zoeken…" style="background:transparent; border:none; outline:none; color:#ECEDEE; font-size:13px; width:100%;" />
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main style="flex:1; min-width:0; padding:34px 40px 60px; max-width:1180px;">
+    <div style="display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:28px;">
+      <div>
+        <div style="font-size:11px; letter-spacing:0.14em; color:#5A606B; text-transform:uppercase; margin-bottom:7px;">{{ pageKicker }}</div>
+        <h1 style="margin:0; font-size:27px; font-weight:700; color:#F5F5F7; letter-spacing:-0.01em;">{{ pageTitle }}</h1>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:11px; color:#5A606B;">Beschikbaar saldo</div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:19px; font-weight:600; color:#D4A855; margin-top:2px;">{{ f.available }}</div>
+      </div>
+    </div>
+
+    <!-- ============ DASHBOARD ============ -->
+    <sc-if value="{{ isDashboard }}" hint-placeholder-val="{{ true }}">
+    <div style="animation:jvFade 0.3s ease;">
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:14px;">
+        <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:18px 18px 16px; box-shadow:0 8px 24px rgba(0,0,0,0.35);">
+          <div style="font-size:11.5px; color:#8A8F98; margin-bottom:9px;">Omzet deze maand</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:22px; font-weight:600; color:#3ECF8E;">{{ f.monthRevenue }}</div>
+        </div>
+        <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:18px 18px 16px; box-shadow:0 8px 24px rgba(0,0,0,0.35);">
+          <div style="font-size:11.5px; color:#8A8F98; margin-bottom:9px;">Winst deze maand</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:22px; font-weight:600; color:{{ profitColor }};">{{ f.monthProfit }}</div>
+        </div>
+        <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:18px 18px 16px; box-shadow:0 8px 24px rgba(0,0,0,0.35);">
+          <div style="font-size:11.5px; color:#8A8F98; margin-bottom:9px;">Kosten deze maand</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:22px; font-weight:600; color:#E5676D;">{{ f.monthCosts }}</div>
+        </div>
+        <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:18px 18px 16px; box-shadow:0 8px 24px rgba(0,0,0,0.35);">
+          <div style="font-size:11.5px; color:#8A8F98; margin-bottom:9px;">Netto cashflow</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:22px; font-weight:600; color:{{ cashflowColor }};">{{ f.netCashflow }}</div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:20px;">
+        <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:16px 18px;">
+          <div style="font-size:11px; color:#8A8F98; margin-bottom:7px;">Verwacht binnen 30 dagen</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:17px; font-weight:600; color:#3ECF8E;">{{ f.incoming30 }}</div>
+        </div>
+        <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:16px 18px;">
+          <div style="font-size:11px; color:#8A8F98; margin-bottom:7px;">Verwachte uitgaven</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:17px; font-weight:600; color:#E5676D;">{{ f.expected30 }}</div>
+        </div>
+        <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:16px 18px;">
+          <div style="font-size:11px; color:#8A8F98; margin-bottom:7px;">Jaaromzet</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:17px; font-weight:600; color:#F5F5F7;">{{ f.yearRevenue }}</div>
+        </div>
+        <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:16px 18px;">
+          <div style="font-size:11px; color:#8A8F98; margin-bottom:7px;">Jaarwinst</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:17px; font-weight:600; color:#D4A855;">{{ f.yearProfit }}</div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1.15fr 1fr; gap:16px; margin-bottom:16px;">
+        <!-- health + goal -->
+        <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:18px; padding:22px 24px; box-shadow:0 8px 24px rgba(0,0,0,0.35);">
+          <div style="font-size:13px; font-weight:600; color:#F5F5F7; margin-bottom:18px;">Financiële gezondheid</div>
+          <div style="display:flex; align-items:center; gap:22px;">
+            {{ healthRing }}
+            <div style="flex:1;">
+              <div style="font-size:12.5px; color:#8A8F98; margin-bottom:5px;">Score</div>
+              <div style="font-size:15px; font-weight:600; color:{{ healthColor }};">{{ healthLabel }}</div>
+              <div style="margin-top:16px; font-size:11.5px; color:#8A8F98; margin-bottom:8px;">Voortgang maanddoel · {{ f.goalPct }}</div>
+              <div style="height:8px; background:#0A0B0D; border-radius:6px; overflow:hidden;">
+                <div style="height:100%; width:{{ goalWidth }}; background:linear-gradient(90deg,#D4A855,#E8C179); border-radius:6px;"></div>
+              </div>
+              <div style="font-size:11px; color:#5A606B; margin-top:7px;">{{ f.monthRevenue }} van {{ f.monthlyTarget }}</div>
+            </div>
+          </div>
+        </div>
+        <!-- AI insights -->
+        <div style="background:linear-gradient(160deg,#181410,#131519); border:1px solid rgba(212,168,85,0.22); border-radius:18px; padding:22px 24px; box-shadow:0 8px 30px rgba(0,0,0,0.4);">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+            <div style="font-size:13px; font-weight:600; color:#F5F5F7; display:flex; align-items:center; gap:8px;"><span style="color:#D4A855;">✦</span> AI Insights</div>
+            <button onClick="{{ runAI }}" style="background:#D4A855; color:#0A0B0D; border:none; border-radius:9px; padding:7px 14px; font-size:12px; font-weight:600; cursor:pointer;">Analyse genereren</button>
+          </div>
+          <sc-if value="{{ aiEmpty }}" hint-placeholder-val="{{ true }}">
+            <div style="font-size:12.5px; color:#8A8F98; line-height:1.6;">Genereer een analyse van je cijfers: marges, grootste kostenpost, en aanbevelingen voor komende maand.</div>
+          </sc-if>
+          <sc-if value="{{ aiLoading }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:12.5px; color:#D4A855; animation:jvPulse 1s infinite;">Analyseren…</div>
+          </sc-if>
+          <sc-if value="{{ aiReady }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:12.5px; color:#DDE0E4; line-height:1.65; white-space:pre-line;">{{ aiInsight }}</div>
+          </sc-if>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1.5fr 1fr; gap:16px; margin-bottom:16px;">
+        <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:18px; padding:22px 24px; box-shadow:0 8px 24px rgba(0,0,0,0.35);">
+          <div style="font-size:13px; font-weight:600; color:#F5F5F7; margin-bottom:6px;">Omzet vs. kosten</div>
+          <div style="font-size:11px; color:#5A606B; margin-bottom:14px;">Afgelopen 6 maanden</div>
+          {{ lineChart }}
+        </div>
+        <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:18px; padding:22px 24px; box-shadow:0 8px 24px rgba(0,0,0,0.35);">
+          <div style="font-size:13px; font-weight:600; color:#F5F5F7; margin-bottom:14px;">Inkomsten per categorie</div>
+          {{ pieChart }}
+        </div>
+      </div>
+
+      <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:18px; padding:22px 24px; box-shadow:0 8px 24px rgba(0,0,0,0.35);">
+        <div style="font-size:13px; font-weight:600; color:#F5F5F7; margin-bottom:16px;">Verwachte betalingen · komende 30 dagen</div>
+        <sc-if value="{{ upcomingEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:26px; text-align:center; color:#5A606B; font-size:13px;">Nog geen verwachte betalingen. Voeg facturen of herhalende inkomsten toe.</div>
+        </sc-if>
+        <sc-for list="{{ upcoming30 }}" as="p" hint-placeholder-count="3">
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="width:7px; height:7px; border-radius:50%; background:{{ p.dot }};"></span>
+              <div>
+                <div style="font-size:13px; color:#ECEDEE; font-weight:500;">{{ p.label }}</div>
+                <div style="font-size:11px; color:#5A606B;">{{ p.meta }}</div>
+              </div>
+            </div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:600; color:{{ p.color }};">{{ p.amountFmt }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ INCOME ============ -->
+    <sc-if value="{{ isIncome }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:jvFade 0.3s ease; display:grid; grid-template-columns:340px 1fr; gap:20px; align-items:start;">
+      <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:18px; padding:22px; box-shadow:0 8px 24px rgba(0,0,0,0.35); position:sticky; top:24px;">
+        <div style="font-size:13px; font-weight:600; color:#F5F5F7; margin-bottom:16px;">Nieuwe inkomst</div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <input value="{{ draft.income.company }}" onInput="{{ bind.income.company }}" placeholder="Bedrijf" style="{{ iStyle }}" />
+          <input value="{{ draft.income.client }}" onInput="{{ bind.income.client }}" placeholder="Klant" style="{{ iStyle }}" />
+          <input value="{{ draft.income.description }}" onInput="{{ bind.income.description }}" placeholder="Omschrijving" style="{{ iStyle }}" />
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <input value="{{ draft.income.amount }}" onInput="{{ bind.income.amount }}" placeholder="Bedrag €" type="number" style="{{ iStyle }}" />
+            <input value="{{ draft.income.btw }}" onInput="{{ bind.income.btw }}" placeholder="BTW %" type="number" style="{{ iStyle }}" />
+          </div>
+          <input value="{{ draft.income.date }}" onInput="{{ bind.income.date }}" type="date" style="{{ iStyle }}" />
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <select value="{{ draft.income.status }}" onChange="{{ bind.income.status }}" style="{{ iStyle }}">
+              <option value="betaald">Betaald</option>
+              <option value="openstaand">Openstaand</option>
+            </select>
+            <select value="{{ draft.income.recurring }}" onChange="{{ bind.income.recurring }}" style="{{ iStyle }}">
+              <option value="nee">Eenmalig</option>
+              <option value="ja">Herhalend</option>
+            </select>
+          </div>
+          <input value="{{ draft.income.method }}" onInput="{{ bind.income.method }}" placeholder="Betaalmethode" style="{{ iStyle }}" />
+          <select value="{{ draft.income.category }}" onChange="{{ bind.income.category }}" style="{{ iStyle }}">
+            <option value="Freelance">Freelance</option><option value="Consulting">Consulting</option><option value="Affiliate">Affiliate</option><option value="SaaS">SaaS</option><option value="Dividend">Dividend</option><option value="Investeringen">Investeringen</option><option value="Verhuur">Verhuur</option><option value="Overig">Overig</option>
+          </select>
+          <select value="{{ draft.income.business }}" onChange="{{ bind.income.business }}" style="{{ iStyle }}">
+            <option value="CKJ">CKJ</option><option value="Humphreys Closing">Humphreys Closing</option><option value="Lumen">Lumen</option>
+          </select>
+          <textarea value="{{ draft.income.notes }}" onInput="{{ bind.income.notes }}" placeholder="Notities" rows="2" style="{{ iStyle }}"></textarea>
+          <button onClick="{{ addIncome }}" style="{{ btnPrimary }}">+ Inkomst toevoegen</button>
+        </div>
+      </div>
+      <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:18px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,0.35);">
+        <sc-if value="{{ incomeEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:60px; text-align:center; color:#5A606B; font-size:13.5px;">Nog geen inkomsten toegevoegd.<br/><span style="color:#8A8F98;">Voeg je eerste inkomst toe met het formulier links.</span></div>
+        </sc-if>
+        <sc-for list="{{ incomeRows }}" as="r" hint-placeholder-count="4">
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 22px; border-bottom:1px solid rgba(255,255,255,0.05);">
+            <div style="min-width:0;">
+              <div style="display:flex; align-items:center; gap:9px; margin-bottom:4px;">
+                <span style="font-size:13.5px; font-weight:600; color:#ECEDEE;">{{ r.description }}</span>
+                <span style="font-size:10px; padding:2px 7px; border-radius:20px; background:{{ r.catBg }}; color:{{ r.catColor }};">{{ r.category }}</span>
+                <span style="font-size:10px; color:#5A606B; opacity:{{ r.recDot }};">↻ herhalend</span>
+              </div>
+              <div style="font-size:11.5px; color:#5A606B;">{{ r.client }} · {{ r.dateFmt }} · {{ r.method }}</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:16px;">
+              <span onClick="{{ r.toggle }}" style="font-size:10.5px; padding:3px 9px; border-radius:20px; cursor:pointer; background:{{ r.statusBg }}; color:{{ r.statusColor }};">{{ r.status }}</span>
+              <span style="font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:600; color:#3ECF8E; min-width:96px; text-align:right;">{{ r.amountFmt }}</span>
+              <span onClick="{{ r.del }}" style="color:#5A606B; cursor:pointer; font-size:15px;" title="Verwijderen">×</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ EXPENSES ============ -->
+    <sc-if value="{{ isExpenses }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:jvFade 0.3s ease; display:grid; grid-template-columns:340px 1fr; gap:20px; align-items:start;">
+      <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:18px; padding:22px; box-shadow:0 8px 24px rgba(0,0,0,0.35); position:sticky; top:24px;">
+        <div style="font-size:13px; font-weight:600; color:#F5F5F7; margin-bottom:16px;">Nieuwe uitgave</div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <input value="{{ draft.expense.description }}" onInput="{{ bind.expense.description }}" placeholder="Omschrijving" style="{{ iStyle }}" />
+          <input value="{{ draft.expense.amount }}" onInput="{{ bind.expense.amount }}" placeholder="Bedrag €" type="number" style="{{ iStyle }}" />
+          <input value="{{ draft.expense.date }}" onInput="{{ bind.expense.date }}" type="date" style="{{ iStyle }}" />
+          <select value="{{ draft.expense.category }}" onChange="{{ bind.expense.category }}" style="{{ iStyle }}">
+            <option value="Woning">Woning</option><option value="Auto">Auto</option><option value="Verzekeringen">Verzekeringen</option><option value="Telefoon">Telefoon</option><option value="Internet">Internet</option><option value="Marketing">Marketing</option><option value="Software">Software</option><option value="Abonnementen">Abonnementen</option><option value="Belastingen">Belastingen</option><option value="Persoonlijke uitgaven">Persoonlijke uitgaven</option><option value="Vakantie">Vakantie</option><option value="Investeringen">Investeringen</option><option value="Overig">Overig</option>
+          </select>
+          <select value="{{ draft.expense.business }}" onChange="{{ bind.expense.business }}" style="{{ iStyle }}">
+            <option value="CKJ">CKJ</option><option value="Humphreys Closing">Humphreys Closing</option><option value="Lumen">Lumen</option>
+          </select>
+          <input value="{{ draft.expense.paidVia }}" onInput="{{ bind.expense.paidVia }}" placeholder="Betaald via" style="{{ iStyle }}" />
+          <select value="{{ draft.expense.frequency }}" onChange="{{ bind.expense.frequency }}" style="{{ iStyle }}">
+            <option value="eenmalig">Eenmalig</option>
+            <option value="maandelijks">Maandelijks</option>
+          </select>
+          <textarea value="{{ draft.expense.note }}" onInput="{{ bind.expense.note }}" placeholder="Notitie" rows="2" style="{{ iStyle }}"></textarea>
+          <button onClick="{{ addExpense }}" style="{{ btnPrimary }}">+ Uitgave toevoegen</button>
+        </div>
+      </div>
+      <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:18px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,0.35);">
+        <sc-if value="{{ expenseEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:60px; text-align:center; color:#5A606B; font-size:13.5px;">Nog geen uitgaven toegevoegd.<br/><span style="color:#8A8F98;">Houd je kosten bij met het formulier links.</span></div>
+        </sc-if>
+        <sc-for list="{{ expenseRows }}" as="r" hint-placeholder-count="4">
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 22px; border-bottom:1px solid rgba(255,255,255,0.05);">
+            <div>
+              <div style="display:flex; align-items:center; gap:9px; margin-bottom:4px;">
+                <span style="font-size:13.5px; font-weight:600; color:#ECEDEE;">{{ r.description }}</span>
+                <span style="font-size:10px; padding:2px 7px; border-radius:20px; background:rgba(229,103,109,0.12); color:#E5676D;">{{ r.category }}</span>
+                <span style="font-size:10px; color:#5A606B; opacity:{{ r.recDot }};">↻ maandelijks</span>
+              </div>
+              <div style="font-size:11.5px; color:#5A606B;">{{ r.dateFmt }} · {{ r.paidVia }} · {{ r.business }}</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:16px;">
+              <span style="font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:600; color:#E5676D; min-width:96px; text-align:right;">{{ r.amountFmt }}</span>
+              <span onClick="{{ r.del }}" style="color:#5A606B; cursor:pointer; font-size:15px;">×</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ BUSINESS ============ -->
+    <sc-if value="{{ isBusiness }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:jvFade 0.3s ease;">
+      <div style="display:flex; gap:6px; margin-bottom:24px;">
+        <div onClick="{{ bizTab.overview }}" style="{{ bizTabStyle.overview }}">Overzicht</div>
+        <div onClick="{{ bizTab.ckj }}" style="{{ bizTabStyle.ckj }}">CKJ</div>
+        <div onClick="{{ bizTab.humphreys }}" style="{{ bizTabStyle.humphreys }}">Humphreys Closing</div>
+        <div onClick="{{ bizTab.lumen }}" style="{{ bizTabStyle.lumen }}">Lumen</div>
+      </div>
+
+      <sc-if value="{{ isBizOverview }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:18px;">
+          <sc-for list="{{ bizCards }}" as="b" hint-placeholder-count="3">
+            <div onClick="{{ b.select }}" style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:18px; padding:22px; cursor:pointer; box-shadow:0 8px 24px rgba(0,0,0,0.35);">
+              <div style="display:flex; align-items:center; gap:9px; margin-bottom:18px;">
+                <span style="width:11px; height:11px; border-radius:3px; background:{{ b.color }};"></span>
+                <span style="font-size:15px; font-weight:600; color:#F5F5F7;">{{ b.name }}</span>
+              </div>
+              <div style="font-size:11px; color:#8A8F98; margin-bottom:6px;">Kosten deze maand</div>
+              <div style="font-family:'JetBrains Mono',monospace; font-size:23px; font-weight:700; color:#E5676D; margin-bottom:18px;">{{ b.monthCostFmt }}</div>
+              <div style="display:flex; justify-content:space-between; padding-top:15px; border-top:1px solid rgba(255,255,255,0.06);">
+                <div><div style="font-size:10.5px; color:#5A606B; margin-bottom:4px;">Kosten jaar</div><div style="font-family:'JetBrains Mono',monospace; font-size:13px; color:#E5676D;">{{ b.yearCostFmt }}</div></div>
+                <div style="text-align:right;"><div style="font-size:10.5px; color:#5A606B; margin-bottom:4px;">Omzet jaar</div><div style="font-family:'JetBrains Mono',monospace; font-size:13px; color:#3ECF8E;">{{ b.yearRevFmt }}</div></div>
+              </div>
+              <div style="display:flex; justify-content:space-between; margin-top:13px; font-size:12px;">
+                <span style="color:#8A8F98;">Winst</span>
+                <span style="font-family:'JetBrains Mono',monospace; font-weight:600; color:{{ b.profitColor }};">{{ b.profitFmt }}</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:18px; padding:24px; box-shadow:0 8px 24px rgba(0,0,0,0.35);">
+          <div style="font-size:13px; font-weight:600; color:#F5F5F7; margin-bottom:20px;">Kosten per bedrijf · dit jaar</div>
+          {{ bizBar }}
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isBizDetail }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:20px;">
+          <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:18px;"><div style="font-size:11px; color:#8A8F98; margin-bottom:8px;">Kosten deze maand</div><div style="font-family:'JetBrains Mono',monospace; font-size:20px; font-weight:600; color:#E5676D;">{{ bizKpis.monthCostFmt }}</div></div>
+          <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:18px;"><div style="font-size:11px; color:#8A8F98; margin-bottom:8px;">Kosten dit jaar</div><div style="font-family:'JetBrains Mono',monospace; font-size:20px; font-weight:600; color:#E5676D;">{{ bizKpis.yearCostFmt }}</div></div>
+          <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:18px;"><div style="font-size:11px; color:#8A8F98; margin-bottom:8px;">Omzet dit jaar</div><div style="font-family:'JetBrains Mono',monospace; font-size:20px; font-weight:600; color:#3ECF8E;">{{ bizKpis.yearRevFmt }}</div></div>
+          <div style="background:linear-gradient(160deg,#181410,#131519); border:1px solid rgba(212,168,85,0.22); border-radius:16px; padding:18px;"><div style="font-size:11px; color:#8A8F98; margin-bottom:8px;">Winst</div><div style="font-family:'JetBrains Mono',monospace; font-size:20px; font-weight:700; color:{{ bizKpis.profitColor }};">{{ bizKpis.profitFmt }}</div></div>
+        </div>
+        <div style="display:grid; grid-template-columns:320px 1fr; gap:20px; align-items:start;">
+          <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:18px; padding:22px; box-shadow:0 8px 24px rgba(0,0,0,0.35); position:sticky; top:24px;">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px;"><span style="width:10px; height:10px; border-radius:3px; background:{{ activeBizColor }};"></span><span style="font-size:13px; font-weight:600; color:#F5F5F7;">Kosten toevoegen · {{ activeBizName }}</span></div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <input value="{{ draft.expense.description }}" onInput="{{ bind.expense.description }}" placeholder="Omschrijving" style="{{ iStyle }}" />
+              <input value="{{ draft.expense.amount }}" onInput="{{ bind.expense.amount }}" placeholder="Bedrag €" type="number" style="{{ iStyle }}" />
+              <input value="{{ draft.expense.date }}" onInput="{{ bind.expense.date }}" type="date" style="{{ iStyle }}" />
+              <select value="{{ draft.expense.category }}" onChange="{{ bind.expense.category }}" style="{{ iStyle }}"><option value="Woning">Woning</option><option value="Auto">Auto</option><option value="Verzekeringen">Verzekeringen</option><option value="Telefoon">Telefoon</option><option value="Internet">Internet</option><option value="Marketing">Marketing</option><option value="Software">Software</option><option value="Abonnementen">Abonnementen</option><option value="Belastingen">Belastingen</option><option value="Persoonlijke uitgaven">Persoonlijke uitgaven</option><option value="Vakantie">Vakantie</option><option value="Investeringen">Investeringen</option><option value="Overig">Overig</option></select>
+              <select value="{{ draft.expense.frequency }}" onChange="{{ bind.expense.frequency }}" style="{{ iStyle }}"><option value="eenmalig">Eenmalig</option><option value="maandelijks">Maandelijks</option></select>
+              <button onClick="{{ bizAddExpense }}" style="{{ btnPrimary }}">+ Kosten toevoegen</button>
+            </div>
+          </div>
+          <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:18px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,0.35);">
+            <sc-if value="{{ bizExpenseEmpty }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:60px; text-align:center; color:#5A606B; font-size:13.5px;">Nog geen kosten voor {{ activeBizName }}.<br/><span style="color:#8A8F98;">Voeg de eerste kostenpost toe met het formulier links.</span></div>
+            </sc-if>
+            <sc-for list="{{ bizExpenseRows }}" as="r" hint-placeholder-count="4">
+              <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 22px; border-bottom:1px solid rgba(255,255,255,0.05);">
+                <div>
+                  <div style="display:flex; align-items:center; gap:9px; margin-bottom:4px;">
+                    <span style="font-size:13.5px; font-weight:600; color:#ECEDEE;">{{ r.description }}</span>
+                    <span style="font-size:10px; padding:2px 7px; border-radius:20px; background:rgba(229,103,109,0.12); color:#E5676D;">{{ r.category }}</span>
+                  </div>
+                  <div style="font-size:11.5px; color:#5A606B;">{{ r.dateFmt }} · {{ r.paidVia }}</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:16px;">
+                  <span style="font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:600; color:#E5676D;">{{ r.amountFmt }}</span>
+                  <span onClick="{{ r.del }}" style="color:#5A606B; cursor:pointer; font-size:15px;">×</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+    </sc-if>
+
+    <!-- ============ CLIENTS ============ -->
+    <sc-if value="{{ isClients }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:jvFade 0.3s ease; display:grid; grid-template-columns:340px 1fr; gap:20px; align-items:start;">
+      <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:18px; padding:22px; box-shadow:0 8px 24px rgba(0,0,0,0.35); position:sticky; top:24px;">
+        <div style="font-size:13px; font-weight:600; color:#F5F5F7; margin-bottom:16px;">Nieuwe klant</div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <input value="{{ draft.client.name }}" onInput="{{ bind.client.name }}" placeholder="Naam" style="{{ iStyle }}" />
+          <input value="{{ draft.client.company }}" onInput="{{ bind.client.company }}" placeholder="Bedrijf" style="{{ iStyle }}" />
+          <input value="{{ draft.client.email }}" onInput="{{ bind.client.email }}" placeholder="E-mail" style="{{ iStyle }}" />
+          <input value="{{ draft.client.phone }}" onInput="{{ bind.client.phone }}" placeholder="Telefoon" style="{{ iStyle }}" />
+          <input value="{{ draft.client.address }}" onInput="{{ bind.client.address }}" placeholder="Adres" style="{{ iStyle }}" />
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <input value="{{ draft.client.kvk }}" onInput="{{ bind.client.kvk }}" placeholder="KvK" style="{{ iStyle }}" />
+            <input value="{{ draft.client.btw }}" onInput="{{ bind.client.btw }}" placeholder="BTW-nr" style="{{ iStyle }}" />
+          </div>
+          <textarea value="{{ draft.client.notes }}" onInput="{{ bind.client.notes }}" placeholder="Notities" rows="2" style="{{ iStyle }}"></textarea>
+          <button onClick="{{ addClient }}" style="{{ btnPrimary }}">+ Klant toevoegen</button>
+        </div>
+      </div>
+      <div>
+        <sc-if value="{{ clientEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:18px; padding:60px; text-align:center; color:#5A606B; font-size:13.5px;">Nog geen klanten toegevoegd.</div>
+        </sc-if>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+          <sc-for list="{{ clientRows }}" as="c" hint-placeholder-count="4">
+            <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:18px 20px; box-shadow:0 6px 20px rgba(0,0,0,0.3);">
+              <div style="display:flex; align-items:flex-start; justify-content:space-between;">
+                <div style="display:flex; align-items:center; gap:11px;">
+                  <div style="width:38px; height:38px; border-radius:11px; background:linear-gradient(140deg,#D4A855,#8A6A2E); display:flex; align-items:center; justify-content:center; font-weight:700; color:#0A0B0D; font-size:14px;">{{ c.initials }}</div>
+                  <div>
+                    <div style="font-size:13.5px; font-weight:600; color:#ECEDEE;">{{ c.name }}</div>
+                    <div style="font-size:11.5px; color:#8A8F98;">{{ c.company }}</div>
+                  </div>
+                </div>
+                <span onClick="{{ c.del }}" style="color:#5A606B; cursor:pointer; font-size:15px;">×</span>
+              </div>
+              <div style="margin-top:14px; display:flex; flex-direction:column; gap:5px; font-size:11.5px; color:#8A8F98;">
+                <div>✉ {{ c.email }}</div>
+                <div>☏ {{ c.phone }}</div>
+                <div style="opacity:{{ c.hasKvk }};">KvK {{ c.kvk }} · BTW {{ c.btw }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ INVOICES ============ -->
+    <sc-if value="{{ isInvoices }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:jvFade 0.3s ease; display:grid; grid-template-columns:320px 1fr; gap:20px; align-items:start;">
+      <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:18px; padding:22px; box-shadow:0 8px 24px rgba(0,0,0,0.35); position:sticky; top:24px;">
+        <div style="font-size:13px; font-weight:600; color:#F5F5F7; margin-bottom:16px;">Nieuwe factuur</div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <select value="{{ draft.invoice.clientId }}" onChange="{{ bind.invoice.clientId }}" style="{{ iStyle }}">
+            <option value="">Kies klant…</option>
+            {{ clientOptions }}
+          </select>
+          <input value="{{ draft.invoice.number }}" onInput="{{ bind.invoice.number }}" placeholder="Factuurnummer" style="{{ iStyle }}" />
+          <input value="{{ draft.invoice.description }}" onInput="{{ bind.invoice.description }}" placeholder="Omschrijving" style="{{ iStyle }}" />
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <input value="{{ draft.invoice.date }}" onInput="{{ bind.invoice.date }}" type="date" style="{{ iStyle }}" />
+            <input value="{{ draft.invoice.dueDate }}" onInput="{{ bind.invoice.dueDate }}" type="date" style="{{ iStyle }}" />
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <input value="{{ draft.invoice.amount }}" onInput="{{ bind.invoice.amount }}" placeholder="Bedrag €" type="number" style="{{ iStyle }}" />
+            <input value="{{ draft.invoice.btw }}" onInput="{{ bind.invoice.btw }}" placeholder="BTW %" type="number" style="{{ iStyle }}" />
+          </div>
+          <select value="{{ draft.invoice.status }}" onChange="{{ bind.invoice.status }}" style="{{ iStyle }}">
+            <option value="open">Open</option>
+            <option value="betaald">Betaald</option>
+          </select>
+          <button onClick="{{ addInvoice }}" style="{{ btnPrimary }}">+ Factuur aanmaken</button>
+        </div>
+        <div style="margin-top:18px; display:flex; flex-direction:column; gap:8px; max-height:280px; overflow-y:auto;">
+          <sc-for list="{{ invoiceRows }}" as="inv" hint-placeholder-count="3">
+            <div onClick="{{ inv.select }}" style="{{ inv.rowStyle }}">
+              <div>
+                <div style="font-size:12.5px; font-weight:600; color:#ECEDEE;">{{ inv.number }}</div>
+                <div style="font-size:11px; color:#5A606B;">{{ inv.clientName }}</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-family:'JetBrains Mono',monospace; font-size:12.5px; color:#ECEDEE;">{{ inv.totalFmt }}</div>
+                <div style="font-size:10px; color:{{ inv.statusColor }};">{{ inv.status }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div>
+        <sc-if value="{{ hasInvoiceSelected }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; gap:10px; margin-bottom:14px; justify-content:flex-end;">
+            <button onClick="{{ toggleInvoicePaid }}" style="{{ btnGhost }}">Status wisselen</button>
+            <button onClick="{{ printInvoice }}" style="{{ btnPrimary }}">⎙ Print / PDF</button>
+          </div>
+          <div id="invoicePrint" style="background:#F7F5F0; color:#1A1A1A; border-radius:14px; padding:48px 52px; box-shadow:0 10px 40px rgba(0,0,0,0.5); font-size:13px;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:38px;">
+              <div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <div style="width:40px; height:40px; border-radius:10px; background:#0A0B0D; color:#D4A855; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px;">JV</div>
+                  <div>
+                    <div style="font-weight:700; font-size:15px; letter-spacing:0.06em;">{{ inv.company }}</div>
+                    <div style="font-size:11px; color:#888;">{{ inv.companyAddress }}</div>
+                  </div>
+                </div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:26px; font-weight:700; letter-spacing:0.04em; color:#0A0B0D;">FACTUUR</div>
+                <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#666; margin-top:4px;">{{ inv.number }}</div>
+              </div>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:34px;">
+              <div>
+                <div style="font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:#999; margin-bottom:6px;">Factuur aan</div>
+                <div style="font-weight:600;">{{ inv.clientName }}</div>
+                <div style="font-size:12px; color:#666; margin-top:2px;">{{ inv.clientCompany }}</div>
+                <div style="font-size:12px; color:#666;">{{ inv.clientAddress }}</div>
+                <div style="font-size:12px; color:#666; opacity:{{ inv.clientHasBtw }};">BTW: {{ inv.clientBtw }}</div>
+              </div>
+              <div style="text-align:right; font-size:12px; color:#666;">
+                <div>Factuurdatum: <span style="color:#1A1A1A;">{{ inv.dateFmt }}</span></div>
+                <div>Vervaldatum: <span style="color:#1A1A1A;">{{ inv.dueFmt }}</span></div>
+              </div>
+            </div>
+            <table style="width:100%; border-collapse:collapse; margin-bottom:26px;">
+              <thead>
+                <tr style="border-bottom:2px solid #0A0B0D;">
+                  <th style="text-align:left; padding:10px 0; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:#999;">Omschrijving</th>
+                  <th style="text-align:right; padding:10px 0; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:#999;">Bedrag</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom:1px solid #E5E0D5;">
+                  <td style="padding:14px 0; font-size:13px;">{{ inv.description }}</td>
+                  <td style="padding:14px 0; text-align:right; font-family:'JetBrains Mono',monospace;">{{ inv.subFmt }}</td>
+                </tr>
+                <tr style="border-bottom:1px solid #E5E0D5;">
+                  <td style="padding:12px 0; font-size:12px; color:#666;">BTW ({{ inv.btw }}%)</td>
+                  <td style="padding:12px 0; text-align:right; font-family:'JetBrains Mono',monospace; color:#666;">{{ inv.btwFmt }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <div style="display:flex; justify-content:flex-end; margin-bottom:40px;">
+              <div style="text-align:right;">
+                <div style="font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:#999;">Totaal</div>
+                <div style="font-family:'JetBrains Mono',monospace; font-size:26px; font-weight:700; color:#0A0B0D;">{{ inv.totalFmt }}</div>
+              </div>
+            </div>
+            <div style="border-top:1px solid #E5E0D5; padding-top:18px; font-size:11px; color:#888; line-height:1.7;">
+              Gelieve het totaalbedrag over te maken naar <span style="color:#1A1A1A; font-family:'JetBrains Mono',monospace;">{{ inv.iban }}</span> t.n.v. {{ inv.company }} o.v.v. {{ inv.number }}.<br/>
+              KvK {{ inv.companyKvk }} · BTW {{ inv.companyBtw }}
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ noInvoiceSelected }}" hint-placeholder-val="{{ true }}">
+          <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:18px; padding:80px 40px; text-align:center; color:#5A606B; font-size:13.5px;">Selecteer of maak een factuur om het voorbeeld te zien.</div>
+        </sc-if>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ GOALS ============ -->
+    <sc-if value="{{ isGoals }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:jvFade 0.3s ease;">
+      <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:18px; padding:20px 22px; margin-bottom:20px; display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr auto; gap:12px; align-items:end; box-shadow:0 8px 24px rgba(0,0,0,0.35);">
+        <div><div style="font-size:11px; color:#8A8F98; margin-bottom:6px;">Titel</div><input value="{{ draft.goal.title }}" onInput="{{ bind.goal.title }}" placeholder="Bijv. Buffer 6 maanden" style="{{ iStyle }}" /></div>
+        <div><div style="font-size:11px; color:#8A8F98; margin-bottom:6px;">Doelbedrag €</div><input value="{{ draft.goal.target }}" onInput="{{ bind.goal.target }}" type="number" style="{{ iStyle }}" /></div>
+        <div><div style="font-size:11px; color:#8A8F98; margin-bottom:6px;">Al gespaard €</div><input value="{{ draft.goal.saved }}" onInput="{{ bind.goal.saved }}" type="number" style="{{ iStyle }}" /></div>
+        <div><div style="font-size:11px; color:#8A8F98; margin-bottom:6px;">Deadline</div><input value="{{ draft.goal.deadline }}" onInput="{{ bind.goal.deadline }}" type="date" style="{{ iStyle }}" /></div>
+        <button onClick="{{ addGoal }}" style="{{ btnPrimary }}">+ Doel</button>
+      </div>
+      <sc-if value="{{ goalEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:18px; padding:60px; text-align:center; color:#5A606B; font-size:13.5px;">Nog geen doelen. Stel je eerste financiële doel in.</div>
+      </sc-if>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+        <sc-for list="{{ goalRows }}" as="g" hint-placeholder-count="2">
+          <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:18px; padding:22px 24px; box-shadow:0 8px 24px rgba(0,0,0,0.35);">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px;">
+              <div>
+                <div style="font-size:15px; font-weight:600; color:#F5F5F7;">{{ g.title }}</div>
+                <div style="font-size:11.5px; color:#5A606B; margin-top:3px;">Deadline {{ g.deadlineFmt }}</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-family:'JetBrains Mono',monospace; font-size:20px; font-weight:700; color:#D4A855;">{{ g.pct }}</div>
+                <span onClick="{{ g.del }}" style="color:#5A606B; cursor:pointer; font-size:14px;">verwijderen</span>
+              </div>
+            </div>
+            <div style="height:10px; background:#0A0B0D; border-radius:6px; overflow:hidden; margin-bottom:10px;">
+              <div style="height:100%; width:{{ g.width }}; background:linear-gradient(90deg,#3ECF8E,#2FA872); border-radius:6px;"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:12px; font-family:'JetBrains Mono',monospace;">
+              <span style="color:#3ECF8E;">{{ g.savedFmt }}</span>
+              <span style="color:#8A8F98;">{{ g.targetFmt }}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ NET WORTH ============ -->
+    <sc-if value="{{ isNetworth }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:jvFade 0.3s ease;">
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:20px;">
+        <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:20px;"><div style="font-size:11.5px; color:#8A8F98; margin-bottom:8px;">Bezittingen</div><div style="font-family:'JetBrains Mono',monospace; font-size:22px; font-weight:600; color:#3ECF8E;">{{ f.assetsTotal }}</div></div>
+        <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:20px;"><div style="font-size:11.5px; color:#8A8F98; margin-bottom:8px;">Schulden</div><div style="font-family:'JetBrains Mono',monospace; font-size:22px; font-weight:600; color:#E5676D;">{{ f.debtsTotal }}</div></div>
+        <div style="background:linear-gradient(160deg,#181410,#131519); border:1px solid rgba(212,168,85,0.22); border-radius:16px; padding:20px;"><div style="font-size:11.5px; color:#8A8F98; margin-bottom:8px;">Nettovermogen</div><div style="font-family:'JetBrains Mono',monospace; font-size:22px; font-weight:700; color:#D4A855;">{{ f.netWorth }}</div></div>
+      </div>
+      <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:18px; padding:24px; margin-bottom:20px; box-shadow:0 8px 24px rgba(0,0,0,0.35);">
+        <div style="font-size:13px; font-weight:600; color:#F5F5F7; margin-bottom:18px;">Bezittingen vs. schulden</div>
+        {{ barChart }}
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+        <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:18px; padding:22px; box-shadow:0 8px 24px rgba(0,0,0,0.35);">
+          <div style="font-size:13px; font-weight:600; color:#3ECF8E; margin-bottom:14px;">Bezittingen</div>
+          <div style="display:grid; grid-template-columns:1.3fr 1fr 1fr auto; gap:8px; margin-bottom:14px;">
+            <select value="{{ draft.asset.type }}" onChange="{{ bind.asset.type }}" style="{{ iStyle }}"><option value="Bankrekening">Bankrekening</option><option value="Spaarrekening">Spaarrekening</option><option value="Crypto">Crypto</option><option value="Beleggingen">Beleggingen</option><option value="Vastgoed">Vastgoed</option><option value="Auto">Auto</option><option value="Overig">Overig</option></select>
+            <input value="{{ draft.asset.name }}" onInput="{{ bind.asset.name }}" placeholder="Naam" style="{{ iStyle }}" />
+            <input value="{{ draft.asset.value }}" onInput="{{ bind.asset.value }}" placeholder="€" type="number" style="{{ iStyle }}" />
+            <button onClick="{{ addAsset }}" style="{{ btnMini }}">+</button>
+          </div>
+          <sc-for list="{{ assetRows }}" as="a" hint-placeholder-count="3">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:11px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+              <div><span style="font-size:13px; color:#ECEDEE;">{{ a.name }}</span> <span style="font-size:10px; color:#5A606B;">{{ a.type }}</span></div>
+              <div style="display:flex; gap:12px; align-items:center;"><span style="font-family:'JetBrains Mono',monospace; font-size:13px; color:#3ECF8E;">{{ a.valueFmt }}</span><span onClick="{{ a.del }}" style="color:#5A606B; cursor:pointer;">×</span></div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:18px; padding:22px; box-shadow:0 8px 24px rgba(0,0,0,0.35);">
+          <div style="font-size:13px; font-weight:600; color:#E5676D; margin-bottom:14px;">Schulden</div>
+          <div style="display:grid; grid-template-columns:1.3fr 1fr 1fr auto; gap:8px; margin-bottom:14px;">
+            <select value="{{ draft.debt.type }}" onChange="{{ bind.debt.type }}" style="{{ iStyle }}"><option value="Hypotheek">Hypotheek</option><option value="Lening">Lening</option><option value="Creditcard">Creditcard</option><option value="Belastingen">Belastingen</option><option value="Overig">Overig</option></select>
+            <input value="{{ draft.debt.name }}" onInput="{{ bind.debt.name }}" placeholder="Naam" style="{{ iStyle }}" />
+            <input value="{{ draft.debt.value }}" onInput="{{ bind.debt.value }}" placeholder="€" type="number" style="{{ iStyle }}" />
+            <button onClick="{{ addDebt }}" style="{{ btnMini }}">+</button>
+          </div>
+          <sc-for list="{{ debtRows }}" as="d" hint-placeholder-count="2">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:11px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+              <div><span style="font-size:13px; color:#ECEDEE;">{{ d.name }}</span> <span style="font-size:10px; color:#5A606B;">{{ d.type }}</span></div>
+              <div style="display:flex; gap:12px; align-items:center;"><span style="font-family:'JetBrains Mono',monospace; font-size:13px; color:#E5676D;">{{ d.valueFmt }}</span><span onClick="{{ d.del }}" style="color:#5A606B; cursor:pointer;">×</span></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ CASHFLOW ============ -->
+    <sc-if value="{{ isCashflow }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:jvFade 0.3s ease;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:20px;">
+        <div style="background:linear-gradient(160deg,#0F1613,#131519); border:1px solid rgba(62,207,142,0.2); border-radius:16px; padding:22px;"><div style="font-size:11.5px; color:#8A8F98; margin-bottom:8px;">Verwacht binnen 30 dagen</div><div style="font-family:'JetBrains Mono',monospace; font-size:24px; font-weight:700; color:#3ECF8E;">{{ f.incoming30 }}</div></div>
+        <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:22px;"><div style="font-size:11.5px; color:#8A8F98; margin-bottom:8px;">Verwacht binnen 90 dagen</div><div style="font-family:'JetBrains Mono',monospace; font-size:24px; font-weight:700; color:#D4A855;">{{ f.incoming90 }}</div></div>
+      </div>
+      <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:18px; padding:20px 22px; margin-bottom:20px; display:grid; grid-template-columns:1.6fr 1fr 1fr auto; gap:12px; align-items:end;">
+        <div><div style="font-size:11px; color:#8A8F98; margin-bottom:6px;">Omschrijving (handmatig item)</div><input value="{{ draft.cashflow.description }}" onInput="{{ bind.cashflow.description }}" placeholder="Bijv. verwachte teruggave" style="{{ iStyle }}" /></div>
+        <div><div style="font-size:11px; color:#8A8F98; margin-bottom:6px;">Bedrag €</div><input value="{{ draft.cashflow.amount }}" onInput="{{ bind.cashflow.amount }}" type="number" style="{{ iStyle }}" /></div>
+        <div><div style="font-size:11px; color:#8A8F98; margin-bottom:6px;">Verwachte datum</div><input value="{{ draft.cashflow.date }}" onInput="{{ bind.cashflow.date }}" type="date" style="{{ iStyle }}" /></div>
+        <button onClick="{{ addCashflow }}" style="{{ btnPrimary }}">+ Toevoegen</button>
+      </div>
+      <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:18px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,0.35);">
+        <div style="padding:16px 22px; font-size:13px; font-weight:600; color:#F5F5F7; border-bottom:1px solid rgba(255,255,255,0.06);">Alles wat nog binnenkomt</div>
+        <sc-if value="{{ cashflowEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:50px; text-align:center; color:#5A606B; font-size:13px;">Nog niets verwacht. Open facturen, openstaande en herhalende inkomsten verschijnen hier automatisch.</div>
+        </sc-if>
+        <sc-for list="{{ cashflowRows }}" as="p" hint-placeholder-count="5">
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 22px; border-bottom:1px solid rgba(255,255,255,0.05);">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="font-size:10px; padding:2px 8px; border-radius:20px; background:{{ p.tagBg }}; color:{{ p.tagColor }};">{{ p.source }}</span>
+              <div>
+                <div style="font-size:13px; color:#ECEDEE; font-weight:500;">{{ p.label }}</div>
+                <div style="font-size:11px; color:#5A606B;">{{ p.meta }}</div>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:14px;">
+              <span style="font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:600; color:#3ECF8E;">{{ p.amountFmt }}</span>
+              <span onClick="{{ p.del }}" style="color:#5A606B; cursor:pointer; opacity:{{ p.canDel }};">×</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ SETTINGS ============ -->
+    <sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:jvFade 0.3s ease; max-width:620px;">
+      <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:18px; padding:26px 28px; margin-bottom:16px; box-shadow:0 8px 24px rgba(0,0,0,0.35);">
+        <div style="font-size:13px; font-weight:600; color:#F5F5F7; margin-bottom:18px;">Bedrijfsgegevens</div>
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <div><div style="{{ labStyle }}">Bedrijfsnaam</div><input value="{{ settings.companyName }}" onInput="{{ setName }}" style="{{ iStyle }}" /></div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+            <div><div style="{{ labStyle }}">KvK-nummer</div><input value="{{ settings.kvk }}" onInput="{{ setKvk }}" style="{{ iStyle }}" /></div>
+            <div><div style="{{ labStyle }}">BTW-nummer</div><input value="{{ settings.btw }}" onInput="{{ setBtw }}" style="{{ iStyle }}" /></div>
+          </div>
+          <div><div style="{{ labStyle }}">IBAN</div><input value="{{ settings.iban }}" onInput="{{ setIban }}" style="{{ iStyle }}" /></div>
+          <div><div style="{{ labStyle }}">Adres</div><input value="{{ settings.address }}" onInput="{{ setAddress }}" style="{{ iStyle }}" /></div>
+        </div>
+      </div>
+      <div style="background:#131519; border:1px solid rgba(255,255,255,0.06); border-radius:18px; padding:26px 28px; box-shadow:0 8px 24px rgba(0,0,0,0.35);">
+        <div style="font-size:13px; font-weight:600; color:#F5F5F7; margin-bottom:18px;">Financiën</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+          <div><div style="{{ labStyle }}">Beginsaldo €</div><input value="{{ settings.startBalance }}" onInput="{{ setStart }}" type="number" style="{{ iStyle }}" /></div>
+          <div><div style="{{ labStyle }}">Maanddoel omzet €</div><input value="{{ settings.monthlyTarget }}" onInput="{{ setTarget }}" type="number" style="{{ iStyle }}" /></div>
+        </div>
+        <button onClick="{{ resetAll }}" style="margin-top:22px; background:transparent; color:#E5676D; border:1px solid rgba(229,103,109,0.3); border-radius:9px; padding:9px 16px; font-size:12px; cursor:pointer;">Alle data wissen & voorbeeld herstellen</button>
+      </div>
+    </div>
+    </sc-if>
+
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.KEY = 'jamey_vault_v1';
+    this.FIELDS = {
+      income: ['company','client','description','amount','btw','date','status','method','recurring','category','business','notes'],
+      expense: ['description','amount','date','category','business','paidVia','frequency','note'],
+      client: ['name','company','email','phone','address','kvk','btw','notes'],
+      invoice: ['clientId','number','description','date','dueDate','amount','btw','status'],
+      goal: ['title','target','saved','deadline'],
+      asset: ['type','name','value'],
+      debt: ['type','name','value'],
+      cashflow: ['description','amount','date']
+    };
+    this.BUSINESSES = [ {id:'ckj', name:'CKJ', color:'#D4A855'}, {id:'humphreys', name:'Humphreys Closing', color:'#3ECF8E'}, {id:'lumen', name:'Lumen', color:'#6AA9E5'} ];
+    const loaded = this.load();
+    const base = loaded || this.seed();
+    (base.income||[]).forEach((x,i)=>{ if(!x.business) x.business=this.BUSINESSES[i%this.BUSINESSES.length].name; });
+    (base.expenses||[]).forEach((x,i)=>{ if(!x.business) x.business=this.BUSINESSES[i%this.BUSINESSES.length].name; });
+    this.state = Object.assign({
+      page: 'dashboard', search: '', aiInsight: '', aiLoading: false, businessTab: 'overview',
+      selectedInvoice: null, drafts: this.emptyDrafts()
+    }, base);
+    if (base.invoices && base.invoices.length && !this.state.selectedInvoice) {
+      this.state.selectedInvoice = base.invoices[0].id;
+    }
+  }
+
+  // ---------- persistence ----------
+  load(){ try { const s = localStorage.getItem(this.KEY); return s ? JSON.parse(s) : null; } catch(e){ return null; } }
+  persist(){
+    try {
+      const { income, expenses, clients, invoices, goals, assets, debts, cashflow, settings, page } = this.state;
+      localStorage.setItem(this.KEY, JSON.stringify({ income, expenses, clients, invoices, goals, assets, debts, cashflow, settings, page }));
+    } catch(e){}
+  }
+  emptyDraftFor(form){ const o={}; this.FIELDS[form].forEach(f=>o[f]=''); 
+    if(form==='income'){o.status='betaald';o.recurring='nee';o.category='Freelance';o.business='CKJ';}
+    if(form==='expense'){o.category='Software';o.frequency='eenmalig';o.business='CKJ';}
+    if(form==='invoice'){o.status='open';o.btw='21';}
+    if(form==='asset'){o.type='Bankrekening';}
+    if(form==='debt'){o.type='Hypotheek';}
+    return o; }
+  emptyDrafts(){ const o={}; Object.keys(this.FIELDS).forEach(f=>o[f]=this.emptyDraftFor(f)); return o; }
+
+  // ---------- seed ----------
+  seed(){
+    const y = new Date().getFullYear(), m = new Date().getMonth();
+    const d = (mo,day)=>{ const dt=new Date(y, mo, day); return dt.toISOString().slice(0,10); };
+    const clients = [
+      {id:'c1', name:'Sanne de Vries', company:'Northwind Studio', email:'sanne@northwind.nl', phone:'+31 6 1234 5678', address:'Keizersgracht 210, Amsterdam', kvk:'71234567', btw:'NL857123456B01', notes:''},
+      {id:'c2', name:'Mark Jansen', company:'Loop Ventures', email:'mark@loopvc.com', phone:'+31 6 8765 4321', address:'Coolsingel 45, Rotterdam', kvk:'68123499', btw:'NL861998877B01', notes:'Kwartaalfacturatie'},
+      {id:'c3', name:'Emma Bakker', company:'Bakker & Co', email:'emma@bakkerco.nl', phone:'+31 6 2233 4455', address:'Oudegracht 12, Utrecht', kvk:'77001122', btw:'', notes:''}
+    ];
+    return {
+      settings: { companyName:'Jamey Consulting', kvk:'90112233', btw:'NL004455667B01', iban:'NL91 ABNA 0417 1643 00', address:'Prinsengracht 500, 1017 KH Amsterdam', startBalance:18500, monthlyTarget:14000 },
+      clients,
+      income: [
+        {id:'i1', company:'Jamey Consulting', client:'Northwind Studio', description:'Q-strategie sprint', amount:8500, btw:21, date:d(m,4), status:'betaald', method:'Overboeking', recurring:'nee', category:'Consulting', notes:''},
+        {id:'i2', company:'Jamey Consulting', client:'Loop Ventures', description:'Retainer product-advies', amount:3200, btw:21, date:d(m,2), status:'betaald', method:'Overboeking', recurring:'ja', category:'Consulting', notes:'Maandelijkse retainer'},
+        {id:'i3', company:'Jamey Consulting', client:'Bakker & Co', description:'Landingspagina build', amount:2400, btw:21, date:d(m,9), status:'openstaand', method:'iDEAL', recurring:'nee', category:'Freelance', notes:''},
+        {id:'i4', company:'Vault SaaS', client:'Diverse', description:'SaaS abonnementen', amount:1150, btw:21, date:d(m,1), status:'betaald', method:'Stripe', recurring:'ja', category:'SaaS', notes:''},
+        {id:'i5', company:'Portfolio', client:'—', description:'Dividend Q2', amount:640, btw:0, date:d(m-1,15), status:'betaald', method:'Broker', recurring:'nee', category:'Dividend', notes:''},
+        {id:'i6', company:'Jamey Consulting', client:'Northwind Studio', description:'Workshop design ops', amount:1800, btw:21, date:d(m-1,8), status:'betaald', method:'Overboeking', recurring:'nee', category:'Consulting', notes:''},
+        {id:'i7', company:'Affiliate', client:'—', description:'Affiliate uitbetaling', amount:420, btw:0, date:d(m-2,20), status:'betaald', method:'PayPal', recurring:'nee', category:'Affiliate', notes:''}
+      ],
+      expenses: [
+        {id:'e1', description:'Kantoorhuur', amount:1250, date:d(m,1), category:'Woning', paidVia:'Incasso', frequency:'maandelijks', note:''},
+        {id:'e2', description:'Adobe + Figma', amount:98, date:d(m,3), category:'Software', paidVia:'Creditcard', frequency:'maandelijks', note:''},
+        {id:'e3', description:'Zakelijke auto lease', amount:640, date:d(m,5), category:'Auto', paidVia:'Incasso', frequency:'maandelijks', note:''},
+        {id:'e4', description:'Google Ads', amount:520, date:d(m,7), category:'Marketing', paidVia:'Creditcard', frequency:'eenmalig', note:''},
+        {id:'e5', description:'Aansprakelijkheidsverzekering', amount:74, date:d(m,2), category:'Verzekeringen', paidVia:'Incasso', frequency:'maandelijks', note:''},
+        {id:'e6', description:'Internet + telefoon', amount:85, date:d(m,4), category:'Internet', paidVia:'Incasso', frequency:'maandelijks', note:''},
+        {id:'e7', description:'BTW-reservering', amount:2100, date:d(m-1,10), category:'Belastingen', paidVia:'Overboeking', frequency:'eenmalig', note:''}
+      ],
+      invoices: [
+        {id:'inv1', clientId:'c3', number:'2026-014', description:'Landingspagina build', date:d(m,9), dueDate:d(m,23), amount:2400, btw:21, status:'open'},
+        {id:'inv2', clientId:'c1', number:'2026-013', description:'Q-strategie sprint', date:d(m,4), dueDate:d(m,18), amount:8500, btw:21, status:'betaald'},
+        {id:'inv3', clientId:'c2', number:'2026-012', description:'Retainer april', date:d(m-1,1), dueDate:d(m,1), amount:3200, btw:21, status:'open'}
+      ],
+      goals: [
+        {id:'g1', title:'Buffer 6 maanden', target:36000, saved:22400, deadline:d(11,31)},
+        {id:'g2', title:'Nieuwe MacBook + setup', target:4500, saved:3100, deadline:d(m+2,1)},
+        {id:'g3', title:'Beleggingsinleg 2026', target:24000, saved:9800, deadline:d(11,20)}
+      ],
+      assets: [
+        {id:'a1', type:'Bankrekening', name:'Zakelijke rekening', value:18500},
+        {id:'a2', type:'Spaarrekening', name:'Buffer', value:22400},
+        {id:'a3', type:'Beleggingen', name:'Indexfondsen', value:41200},
+        {id:'a4', type:'Crypto', name:'BTC/ETH', value:8600},
+        {id:'a5', type:'Auto', name:'Restwaarde lease-koop', value:12000}
+      ],
+      debts: [
+        {id:'db1', type:'Hypotheek', name:'Woning', value:248000},
+        {id:'db2', type:'Belastingen', name:'IB-reservering', value:9400},
+        {id:'db3', type:'Creditcard', name:'Amex', value:1200}
+      ],
+      cashflow: [
+        {id:'cf1', description:'Verwachte BTW-teruggave', amount:1350, date:d(m,26)}
+      ]
+    };
+  }
+
+  // ---------- helpers ----------
+  eur(n){ n = Number(n)||0; return '€ ' + n.toLocaleString('nl-NL',{minimumFractionDigits:2, maximumFractionDigits:2}); }
+  eur0(n){ n = Number(n)||0; return '€ ' + Math.round(n).toLocaleString('nl-NL'); }
+  fdate(s){ if(!s) return '—'; const p=String(s).split('-'); return p.length===3 ? `${p[2]}-${p[1]}-${p[0]}` : s; }
+  today(){ return new Date(); }
+  daysFromNow(s){ if(!s) return 9999; return Math.round((new Date(s) - this.today())/86400000); }
+  invTotal(inv){ return (Number(inv.amount)||0) * (1 + (Number(inv.btw)||0)/100); }
+
+  commit(patch){ this.setState(patch, ()=>this.persist()); }
+  setDraft(form, field, value){ this.setState(prev=>({ drafts: Object.assign({}, prev.drafts, { [form]: Object.assign({}, prev.drafts[form], { [field]: value }) }) })); }
+  add(form, listKey, extra){
+    const d = this.state.drafts[form];
+    const item = Object.assign({ id: form[0] + Date.now() }, d, extra||{});
+    ['amount','btw','target','saved','value'].forEach(k=>{ if(item[k]!==undefined && item[k]!=='') item[k]=parseFloat(item[k])||0; });
+    this.setState(prev=>({ [listKey]:[item].concat(prev[listKey]), drafts: Object.assign({}, prev.drafts, { [form]: this.emptyDraftFor(form) }) }), ()=>this.persist());
+  }
+  del(listKey, id){ this.setState(prev=>({ [listKey]: prev[listKey].filter(x=>x.id!==id) }), ()=>this.persist()); }
+  setSetting(field, value){ this.setState(prev=>({ settings: Object.assign({}, prev.settings, { [field]: (field==='startBalance'||field==='monthlyTarget') ? (parseFloat(value)||0) : value }) }), ()=>this.persist()); }
+
+  monthMatch(dateStr){ const dt=new Date(dateStr); const n=this.today(); return dt.getMonth()===n.getMonth() && dt.getFullYear()===n.getFullYear(); }
+  yearMatch(dateStr){ return new Date(dateStr).getFullYear()===this.today().getFullYear(); }
+
+  runAI(){
+    this.setState({ aiLoading:true, aiInsight:'' });
+    setTimeout(()=>{
+      const inc = this.state.income, exp = this.state.expenses;
+      const monthRev = inc.filter(x=>this.monthMatch(x.date)).reduce((a,b)=>a+(+b.amount||0),0);
+      const monthCost = exp.filter(x=>this.monthMatch(x.date)).reduce((a,b)=>a+(+b.amount||0),0);
+      const profit = monthRev - monthCost;
+      const margin = monthRev ? Math.round(profit/monthRev*100) : 0;
+      const catTotals = {}; exp.forEach(e=>{ catTotals[e.category]=(catTotals[e.category]||0)+(+e.amount||0); });
+      const topCat = Object.entries(catTotals).sort((a,b)=>b[1]-a[1])[0];
+      const open = this.state.invoices.filter(i=>i.status==='open').reduce((a,b)=>a+this.invTotal(b),0);
+      const recurring = inc.filter(i=>i.recurring==='ja').reduce((a,b)=>a+(+b.amount||0),0);
+      const lines = [
+        `Deze maand realiseerde je ${this.eur0(monthRev)} omzet tegen ${this.eur0(monthCost)} kosten — een winstmarge van ${margin}%.`,
+        topCat ? `Je grootste kostenpost is ${topCat[0]} (${this.eur0(topCat[1])}); overweeg hier te optimaliseren.` : '',
+        open>0 ? `Er staat nog ${this.eur0(open)} aan open facturen uit — stuur tijdig een herinnering.` : `Geen openstaande facturen — sterke inbaarheid.`,
+        recurring>0 ? `${this.eur0(recurring)} van je inkomsten is herhalend; dit geeft een voorspelbare basis.` : '',
+        margin>=40 ? `Aanbeveling: reserveer extra richting je buffer- en beleggingsdoelen.` : `Aanbeveling: focus komende maand op omzetgroei of kostenreductie om je marge te verbeteren.`
+      ].filter(Boolean);
+      this.setState({ aiLoading:false, aiInsight: lines.join('\n\n') });
+    }, 900);
+  }
+
+  resetAll(){ localStorage.removeItem(this.KEY); const s=this.seed(); this.setState(Object.assign({ page:'settings', search:'', aiInsight:'', aiLoading:false, selectedInvoice: s.invoices[0].id, drafts:this.emptyDrafts() }, s), ()=>this.persist()); }
+
+  // ---------- charts ----------
+  seriesByMonth(){
+    const now=this.today(); const arr=[];
+    for(let i=5;i>=0;i--){ const dt=new Date(now.getFullYear(), now.getMonth()-i, 1); arr.push({ key:dt.getFullYear()+'-'+dt.getMonth(), label:dt.toLocaleDateString('nl-NL',{month:'short'}) }); }
+    const rev=arr.map(()=>0), cost=arr.map(()=>0);
+    this.state.income.forEach(x=>{ const dt=new Date(x.date); const k=dt.getFullYear()+'-'+dt.getMonth(); const idx=arr.findIndex(m=>m.key===k); if(idx>=0) rev[idx]+=(+x.amount||0); });
+    this.state.expenses.forEach(x=>{ const dt=new Date(x.date); const k=dt.getFullYear()+'-'+dt.getMonth(); const idx=arr.findIndex(m=>m.key===k); if(idx>=0) cost[idx]+=(+x.amount||0); });
+    return { labels:arr.map(a=>a.label), rev, cost };
+  }
+  buildLine(){
+    const s=this.seriesByMonth(); const W=560,H=210,P=30;
+    const max=Math.max(1, ...s.rev, ...s.cost);
+    const x=i=> P + i*((W-P*2)/(s.labels.length-1));
+    const y=v=> H-P - (v/max)*(H-P*2);
+    const path=(arr)=> arr.map((v,i)=>(i?'L':'M')+x(i)+' '+y(v)).join(' ');
+    const R=React.createElement;
+    const grid=[0,0.5,1].map((t,i)=>R('line',{key:'g'+i, x1:P, x2:W-P, y1:P+t*(H-P*2), y2:P+t*(H-P*2), stroke:'rgba(255,255,255,0.05)', strokeWidth:1}));
+    const dots=(arr,c)=>arr.map((v,i)=>R('circle',{key:c+i, cx:x(i), cy:y(v), r:3, fill:c}));
+    return R('div',{},[
+      R('svg',{key:'svg', viewBox:'0 0 '+W+' '+H, style:{width:'100%',height:'auto'}},[
+        ...grid,
+        R('path',{key:'rp', d:path(s.rev), fill:'none', stroke:'#3ECF8E', strokeWidth:2.5, strokeLinejoin:'round'}),
+        R('path',{key:'cp', d:path(s.cost), fill:'none', stroke:'#E5676D', strokeWidth:2.5, strokeLinejoin:'round'}),
+        ...dots(s.rev,'#3ECF8E'), ...dots(s.cost,'#E5676D'),
+        ...s.labels.map((l,i)=>R('text',{key:'t'+i, x:x(i), y:H-8, fill:'#5A606B', fontSize:11, textAnchor:'middle'}, l))
+      ]),
+      R('div',{key:'leg', style:{display:'flex',gap:18,marginTop:10,fontSize:11.5}},[
+        R('span',{key:'a',style:{color:'#3ECF8E'}},'● Omzet'),
+        R('span',{key:'b',style:{color:'#E5676D'}},'● Kosten')
+      ])
+    ]);
+  }
+  buildPie(){
+    const cats={}; this.state.income.forEach(x=>{ cats[x.category]=(cats[x.category]||0)+(+x.amount||0); });
+    const entries=Object.entries(cats).sort((a,b)=>b[1]-a[1]);
+    const total=entries.reduce((a,b)=>a+b[1],0)||1;
+    const palette=['#D4A855','#3ECF8E','#E5676D','#6AA9E5','#B98CE5','#E5B36A','#8A8F98','#4FC4C4'];
+    const R=React.createElement; const cx=70,cy=70,r=58; let ang=-Math.PI/2;
+    const arcs=entries.map((e,i)=>{ const frac=e[1]/total; const a2=ang+frac*Math.PI*2;
+      const x1=cx+r*Math.cos(ang), y1=cy+r*Math.sin(ang), x2=cx+r*Math.cos(a2), y2=cy+r*Math.sin(a2);
+      const large=frac>0.5?1:0; const dd=`M${cx} ${cy} L${x1} ${y1} A${r} ${r} 0 ${large} 1 ${x2} ${y2} Z`; ang=a2;
+      return R('path',{key:i, d:dd, fill:palette[i%palette.length], stroke:'#131519', strokeWidth:2}); });
+    return R('div',{style:{display:'flex',alignItems:'center',gap:20}},[
+      R('svg',{key:'s', viewBox:'0 0 140 140', style:{width:130,height:130,flexShrink:0}},[
+        ...arcs, R('circle',{key:'h',cx:cx,cy:cy,r:30,fill:'#131519'})
+      ]),
+      R('div',{key:'l', style:{display:'flex',flexDirection:'column',gap:8,flex:1}},
+        entries.map((e,i)=>R('div',{key:i,style:{display:'flex',alignItems:'center',justifyContent:'space-between',fontSize:12}},[
+          R('span',{key:'a',style:{display:'flex',alignItems:'center',gap:8,color:'#DDE0E4'}},[
+            R('span',{key:'d',style:{width:9,height:9,borderRadius:2,background:palette[i%palette.length],display:'inline-block'}}), e[0]
+          ]),
+          R('span',{key:'b',style:{fontFamily:'JetBrains Mono, monospace',color:'#8A8F98'}}, Math.round(e[1]/total*100)+'%')
+        ]))
+      )
+    ]);
+  }
+  buildBar(){
+    const A=this.state.assets.reduce((a,b)=>a+(+b.value||0),0);
+    const D=this.state.debts.reduce((a,b)=>a+(+b.value||0),0);
+    const N=A-D; const max=Math.max(A,D,Math.abs(N),1);
+    const R=React.createElement;
+    const bar=(label,val,color)=>{ const w=Math.abs(val)/max*100;
+      return R('div',{key:label,style:{marginBottom:16}},[
+        R('div',{key:'h',style:{display:'flex',justifyContent:'space-between',marginBottom:6,fontSize:12}},[
+          R('span',{key:'a',style:{color:'#8A8F98'}},label),
+          R('span',{key:'b',style:{fontFamily:'JetBrains Mono, monospace',color:color,fontWeight:600}}, this.eur0(val))
+        ]),
+        R('div',{key:'t',style:{height:14,background:'#0A0B0D',borderRadius:7,overflow:'hidden'}},
+          R('div',{style:{height:'100%',width:w+'%',background:color,borderRadius:7,transition:'width .5s'}}))
+      ]); };
+    return R('div',{}, [ bar('Bezittingen',A,'#3ECF8E'), bar('Schulden',D,'#E5676D'), bar('Nettovermogen',N,'#D4A855') ]);
+  }
+
+  // ---------- upcoming / cashflow derivation ----------
+  derivedIncoming(){
+    const list=[]; const s=this.state;
+    s.invoices.filter(i=>i.status==='open').forEach(i=>{ const cl=s.clients.find(c=>c.id===i.clientId); list.push({ id:'inv-'+i.id, source:'Factuur', label:i.number+(cl?' · '+cl.company:''), amount:this.invTotal(i), date:i.dueDate, canDelete:false }); });
+    s.income.filter(i=>i.status==='openstaand').forEach(i=>{ list.push({ id:'inc-'+i.id, source:'Openstaand', label:i.description+' · '+i.client, amount:(+i.amount||0)*(1+(+i.btw||0)/100), date:i.date, canDelete:false }); });
+    s.income.filter(i=>i.recurring==='ja').forEach(i=>{ const dt=new Date(i.date); const nx=new Date(dt.getFullYear(), dt.getMonth()+1, dt.getDate()); list.push({ id:'rec-'+i.id, source:'Herhalend', label:i.description+' (projectie)', amount:(+i.amount||0)*(1+(+i.btw||0)/100), date:nx.toISOString().slice(0,10), canDelete:false }); });
+    s.cashflow.forEach(c=>{ list.push({ id:c.id, source:'Handmatig', label:c.description||'Handmatig item', amount:(+c.amount||0), date:c.date, canDelete:true }); });
+    return list.filter(x=>this.daysFromNow(x.date) >= -3).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  }
+
+  renderVals(){
+    const S=this.state, self=this;
+    const eur=this.eur.bind(this), fdate=this.fdate.bind(this);
+
+    // nav
+    const pages=['dashboard','income','expenses','business','clients','invoices','goals','networth','cashflow','settings'];
+    const navStyle={}, navDot={}, nav={};
+    pages.forEach(p=>{
+      const active = S.page===p;
+      navStyle[p] = { display:'flex', alignItems:'center', gap:10, padding:'9px 12px', borderRadius:10, fontSize:13, fontWeight:active?600:500, color:active?'#F5F5F7':'#8A8F98', background:active?'rgba(255,255,255,0.05)':'transparent', textDecoration:'none', transition:'all .15s' };
+      navDot[p] = active?1:0.3;
+      nav[p] = (e)=>{ e.preventDefault(); self.commit({ page:p }); };
+    });
+
+    const titles={ dashboard:['Overzicht','Dashboard'], income:['Beheer','Inkomsten'], expenses:['Beheer','Uitgaven'], business:['Bedrijven','Kosten per bedrijf'], clients:['Relaties','Klanten'], invoices:['Facturatie','Facturen'], goals:['Planning','Doelen'], networth:['Vermogen','Nettovermogen'], cashflow:['Vooruitzicht','Cashflow & verwachte betalingen'], settings:['Configuratie','Instellingen'] };
+
+    // metrics
+    const paidIncome = S.income.filter(x=>x.status==='betaald');
+    const allPaid = paidIncome.reduce((a,b)=>a+(+b.amount||0),0);
+    const allExp = S.expenses.reduce((a,b)=>a+(+b.amount||0),0);
+    const available = (+S.settings.startBalance||0) + allPaid - allExp;
+    const monthRevenue = S.income.filter(x=>this.monthMatch(x.date)).reduce((a,b)=>a+(+b.amount||0),0);
+    const monthCosts = S.expenses.filter(x=>this.monthMatch(x.date)).reduce((a,b)=>a+(+b.amount||0),0);
+    const monthProfit = monthRevenue - monthCosts;
+    const netCashflow = S.income.filter(x=>x.status==='betaald'&&this.monthMatch(x.date)).reduce((a,b)=>a+(+b.amount||0),0) - monthCosts;
+    const yearRevenue = S.income.filter(x=>this.yearMatch(x.date)).reduce((a,b)=>a+(+b.amount||0),0);
+    const yearProfit = yearRevenue - S.expenses.filter(x=>this.yearMatch(x.date)).reduce((a,b)=>a+(+b.amount||0),0);
+
+    const incoming = this.derivedIncoming();
+    const incoming30 = incoming.filter(x=>this.daysFromNow(x.date)<=30).reduce((a,b)=>a+b.amount,0);
+    const incoming90 = incoming.filter(x=>this.daysFromNow(x.date)<=90).reduce((a,b)=>a+b.amount,0);
+    const expected30 = S.expenses.filter(x=>x.frequency==='maandelijks').reduce((a,b)=>a+(+b.amount||0),0);
+
+    const assetsTotal = S.assets.reduce((a,b)=>a+(+b.value||0),0);
+    const debtsTotal = S.debts.reduce((a,b)=>a+(+b.value||0),0);
+
+    // health score
+    const margin = monthRevenue ? monthProfit/monthRevenue : 0;
+    const savingsRatio = available>0 ? Math.min(1, available/ (monthCosts*3||1)) : 0;
+    const debtRatio = assetsTotal>0 ? Math.max(0, 1 - debtsTotal/(assetsTotal+debtsTotal)) : 0.5;
+    let health = Math.round(Math.max(0, Math.min(1, margin))*40 + savingsRatio*30 + debtRatio*30);
+    health = Math.max(0, Math.min(100, health));
+    const healthColor = health>=70?'#3ECF8E':health>=45?'#D4A855':'#E5676D';
+    const healthLabel = health>=70?'Uitstekend':health>=45?'Gezond':'Aandacht nodig';
+
+    // health ring
+    const R=React.createElement; const circ=2*Math.PI*46;
+    const healthRing = R('svg',{viewBox:'0 0 110 110', style:{width:110,height:110,flexShrink:0}},[
+      R('circle',{key:'bg',cx:55,cy:55,r:46,fill:'none',stroke:'#0A0B0D',strokeWidth:9}),
+      R('circle',{key:'fg',cx:55,cy:55,r:46,fill:'none',stroke:healthColor,strokeWidth:9,strokeLinecap:'round',strokeDasharray:circ,strokeDashoffset:circ*(1-health/100),transform:'rotate(-90 55 55)'}),
+      R('text',{key:'t',x:55,y:52,fill:'#F5F5F7',fontSize:26,fontWeight:700,textAnchor:'middle',fontFamily:'JetBrains Mono, monospace'}, String(health)),
+      R('text',{key:'s',x:55,y:70,fill:'#5A606B',fontSize:10,textAnchor:'middle'}, '/ 100')
+    ]);
+
+    const goalRatio = S.settings.monthlyTarget ? Math.min(1, monthRevenue/S.settings.monthlyTarget) : 0;
+
+    // rows
+    const catColorMap={ Freelance:['rgba(212,168,85,0.12)','#D4A855'], Consulting:['rgba(62,207,142,0.12)','#3ECF8E'], Affiliate:['rgba(106,169,229,0.12)','#6AA9E5'], SaaS:['rgba(185,140,229,0.12)','#B98CE5'], Dividend:['rgba(229,179,106,0.12)','#E5B36A'], Investeringen:['rgba(79,196,196,0.12)','#4FC4C4'], Verhuur:['rgba(138,143,152,0.14)','#B0B4BB'], Overig:['rgba(138,143,152,0.14)','#8A8F98'] };
+    const q = (S.search||'').toLowerCase();
+    const incomeRows = S.income.filter(r=>!q || (r.description+r.client+r.category).toLowerCase().includes(q)).map(r=>({
+      description:r.description||'—', client:r.client||'—', category:r.category, method:r.method||'—', business:r.business||'—',
+      dateFmt:fdate(r.date), amountFmt:eur(r.amount), status:r.status,
+      catBg:(catColorMap[r.category]||catColorMap.Overig)[0], catColor:(catColorMap[r.category]||catColorMap.Overig)[1],
+      recDot:r.recurring==='ja'?1:0,
+      statusBg:r.status==='betaald'?'rgba(62,207,142,0.14)':'rgba(212,168,85,0.14)', statusColor:r.status==='betaald'?'#3ECF8E':'#D4A855',
+      toggle:()=>self.setState(prev=>({income:prev.income.map(x=>x.id===r.id?Object.assign({},x,{status:x.status==='betaald'?'openstaand':'betaald'}):x)}),()=>self.persist()),
+      del:()=>self.del('income', r.id)
+    }));
+    const expenseRows = S.expenses.filter(r=>!q || (r.description+r.category).toLowerCase().includes(q)).map(r=>({
+      description:r.description||'—', category:r.category, paidVia:r.paidVia||'—', business:r.business||'—', dateFmt:fdate(r.date), amountFmt:eur(r.amount),
+      recDot:r.frequency==='maandelijks'?1:0, del:()=>self.del('expenses', r.id)
+    }));
+    const clientRows = S.clients.filter(c=>!q || (c.name+c.company+c.email).toLowerCase().includes(q)).map(c=>({
+      name:c.name||'—', company:c.company||'—', email:c.email||'—', phone:c.phone||'—', kvk:c.kvk||'—', btw:c.btw||'—',
+      initials:(c.name||'?').split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase(), hasKvk:(c.kvk||c.btw)?1:0.35,
+      del:()=>self.del('clients', c.id)
+    }));
+
+    const invoiceRows = S.invoices.map(inv=>{ const cl=S.clients.find(c=>c.id===inv.clientId); const sel=S.selectedInvoice===inv.id;
+      return { number:inv.number||'—', clientName:cl?cl.company:'Onbekend', totalFmt:eur(this.invTotal(inv)), status:inv.status,
+        statusColor:inv.status==='betaald'?'#3ECF8E':'#D4A855',
+        rowStyle:{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'11px 13px', borderRadius:10, cursor:'pointer', background:sel?'rgba(212,168,85,0.1)':'#0A0B0D', border:'1px solid '+(sel?'rgba(212,168,85,0.3)':'rgba(255,255,255,0.05)') },
+        select:()=>self.commit({selectedInvoice:inv.id}) };
+    });
+
+    // selected invoice detail
+    const selInv = S.invoices.find(i=>i.id===S.selectedInvoice);
+    let invDetail={};
+    if(selInv){ const cl=S.clients.find(c=>c.id===selInv.clientId)||{}; const sub=+selInv.amount||0; const btwAmt=sub*((+selInv.btw||0)/100);
+      invDetail={ number:selInv.number, description:selInv.description||'—', dateFmt:fdate(selInv.date), dueFmt:fdate(selInv.dueDate),
+        subFmt:eur(sub), btw:selInv.btw||0, btwFmt:eur(btwAmt), totalFmt:eur(sub+btwAmt),
+        clientName:cl.name||'—', clientCompany:cl.company||'', clientAddress:cl.address||'', clientBtw:cl.btw||'', clientHasBtw:cl.btw?1:0,
+        company:S.settings.companyName, companyAddress:S.settings.address, companyKvk:S.settings.kvk, companyBtw:S.settings.btw, iban:S.settings.iban };
+    }
+
+    const goalRows = S.goals.map(g=>{ const pct=g.target?Math.min(100,Math.round((+g.saved||0)/g.target*100)):0;
+      return { title:g.title||'—', deadlineFmt:fdate(g.deadline), pct:pct+'%', width:pct+'%', savedFmt:eur(g.saved), targetFmt:eur(g.target), del:()=>self.del('goals', g.id) }; });
+
+    const assetRows = S.assets.map(a=>({ name:a.name||a.type, type:a.type, valueFmt:eur(a.value), del:()=>self.del('assets', a.id) }));
+    const debtRows = S.debts.map(d=>({ name:d.name||d.type, type:d.type, valueFmt:eur(d.value), del:()=>self.del('debts', d.id) }));
+
+    const srcColor={ Factuur:['rgba(212,168,85,0.14)','#D4A855'], Openstaand:['rgba(229,179,106,0.14)','#E5B36A'], Herhalend:['rgba(62,207,142,0.14)','#3ECF8E'], Handmatig:['rgba(138,143,152,0.14)','#8A8F98'] };
+    const mapUpcoming=(x)=>{ const dfn=this.daysFromNow(x.date); return { label:x.label, meta:fdate(x.date)+' · over '+(dfn<0?0:dfn)+' dagen', amountFmt:eur(x.amount), color:'#3ECF8E', dot:(srcColor[x.source]||srcColor.Handmatig)[1], source:x.source, tagBg:(srcColor[x.source]||srcColor.Handmatig)[0], tagColor:(srcColor[x.source]||srcColor.Handmatig)[1], canDel:x.canDelete?1:0.15, del: x.canDelete ? ()=>self.del('cashflow', x.id) : ()=>{} }; };
+    const upcoming30 = incoming.filter(x=>this.daysFromNow(x.date)<=30).map(mapUpcoming);
+    const cashflowRows = incoming.map(mapUpcoming);
+
+    // binds
+    const bind={};
+    Object.keys(this.FIELDS).forEach(form=>{ bind[form]={}; this.FIELDS[form].forEach(field=>{ bind[form][field]=(e)=>self.setDraft(form, field, e.target.value); }); });
+
+    // client <option>s for invoice select
+    const clientOptions = S.clients.map(c=>R('option',{key:c.id, value:c.id}, (c.company||c.name)));
+
+    // businesses
+    const BIZ = this.BUSINESSES;
+    const bizMetrics=(name)=>{ const inc=S.income.filter(x=>x.business===name); const exp=S.expenses.filter(x=>x.business===name);
+      const yearRev=inc.filter(x=>this.yearMatch(x.date)).reduce((a,b)=>a+(+b.amount||0),0);
+      const yearCost=exp.filter(x=>this.yearMatch(x.date)).reduce((a,b)=>a+(+b.amount||0),0);
+      const monthCost=exp.filter(x=>this.monthMatch(x.date)).reduce((a,b)=>a+(+b.amount||0),0);
+      return { yearRev, yearCost, monthCost, profit:yearRev-yearCost }; };
+    const bizTabStyle={}, bizTab={};
+    [{id:'overview'}].concat(BIZ).forEach(t=>{ const active=S.businessTab===t.id; bizTabStyle[t.id]={ padding:'9px 15px', borderRadius:9, fontSize:13, fontWeight:active?600:500, cursor:'pointer', color:active?'#F5F5F7':'#8A8F98', background:active?'rgba(255,255,255,0.06)':'transparent', border:'1px solid '+(active?'rgba(255,255,255,0.1)':'transparent') }; bizTab[t.id]=()=>self.setState({businessTab:t.id}); });
+    const bizCards = BIZ.map(b=>{ const m=bizMetrics(b.name); return { name:b.name, color:b.color, monthCostFmt:eur(m.monthCost), yearCostFmt:eur(m.yearCost), yearRevFmt:eur(m.yearRev), profitFmt:eur(m.profit), profitColor:m.profit>=0?'#3ECF8E':'#E5676D', select:()=>self.setState({businessTab:b.id}) }; });
+    const bizBar = (()=>{ const R=React.createElement; const max=Math.max(1,...BIZ.map(b=>bizMetrics(b.name).yearCost));
+      return R('div',{}, BIZ.map(b=>{ const m=bizMetrics(b.name); const w=m.yearCost/max*100; return R('div',{key:b.id,style:{marginBottom:16}},[
+        R('div',{key:'h',style:{display:'flex',justifyContent:'space-between',marginBottom:6,fontSize:12}},[ R('span',{key:'a',style:{color:'#DDE0E4'}},b.name), R('span',{key:'b',style:{fontFamily:'JetBrains Mono, monospace',color:b.color,fontWeight:600}}, self.eur0(m.yearCost)) ]),
+        R('div',{key:'t',style:{height:14,background:'#0A0B0D',borderRadius:7,overflow:'hidden'}}, R('div',{style:{height:'100%',width:w+'%',background:b.color,borderRadius:7}})) ]); })); })();
+    const activeBiz = BIZ.find(b=>b.id===S.businessTab);
+    let bizKpis={}, bizExpenseRows=[];
+    if(activeBiz){ const m=bizMetrics(activeBiz.name); bizKpis={ yearRevFmt:eur(m.yearRev), yearCostFmt:eur(m.yearCost), monthCostFmt:eur(m.monthCost), profitFmt:eur(m.profit), profitColor:m.profit>=0?'#3ECF8E':'#E5676D' };
+      bizExpenseRows = S.expenses.filter(r=>r.business===activeBiz.name).map(r=>({ description:r.description||'—', category:r.category, paidVia:r.paidVia||'—', dateFmt:fdate(r.date), amountFmt:eur(r.amount), del:()=>self.del('expenses', r.id) })); }
+
+    // styles
+    const iStyle = { background:'#0A0B0D', border:'1px solid rgba(255,255,255,0.08)', borderRadius:10, padding:'10px 12px', color:'#ECEDEE', fontSize:13, width:'100%', outline:'none' };
+    const btnPrimary = { background:'#D4A855', color:'#0A0B0D', border:'none', borderRadius:10, padding:'11px 16px', fontSize:13, fontWeight:600, cursor:'pointer', marginTop:2 };
+    const btnGhost = { background:'transparent', color:'#ECEDEE', border:'1px solid rgba(255,255,255,0.12)', borderRadius:9, padding:'9px 15px', fontSize:12.5, cursor:'pointer' };
+    const btnMini = { background:'rgba(255,255,255,0.06)', color:'#ECEDEE', border:'1px solid rgba(255,255,255,0.1)', borderRadius:9, fontSize:16, cursor:'pointer' };
+    const labStyle = { fontSize:11, color:'#8A8F98', marginBottom:6 };
+
+    return {
+      // nav + header
+      navStyle, navDot, nav, search:S.search, onSearch:(e)=>self.setState({search:e.target.value}),
+      pageKicker:titles[S.page][0], pageTitle:titles[S.page][1],
+      isDashboard:S.page==='dashboard', isIncome:S.page==='income', isExpenses:S.page==='expenses', isClients:S.page==='clients', isInvoices:S.page==='invoices', isGoals:S.page==='goals', isNetworth:S.page==='networth', isCashflow:S.page==='cashflow', isSettings:S.page==='settings',
+      // formatted numbers
+      f:{ available:eur(available), monthRevenue:eur(monthRevenue), monthProfit:eur(monthProfit), monthCosts:eur(monthCosts), netCashflow:eur(netCashflow), incoming30:eur(incoming30), incoming90:eur(incoming90), expected30:eur(expected30), yearRevenue:eur(yearRevenue), yearProfit:eur(yearProfit), assetsTotal:eur(assetsTotal), debtsTotal:eur(debtsTotal), netWorth:eur(assetsTotal-debtsTotal), goalPct:Math.round(goalRatio*100)+'%', monthlyTarget:eur(S.settings.monthlyTarget) },
+      profitColor: monthProfit>=0?'#3ECF8E':'#E5676D', cashflowColor: netCashflow>=0?'#3ECF8E':'#E5676D',
+      // business
+      isBusiness:S.page==='business', bizTabStyle, bizTab, isBizOverview:S.businessTab==='overview', isBizDetail:S.businessTab!=='overview',
+      bizCards, bizBar, activeBizName:activeBiz?activeBiz.name:'', activeBizColor:activeBiz?activeBiz.color:'#D4A855', bizKpis, bizExpenseRows, bizExpenseEmpty:bizExpenseRows.length===0,
+      bizAddExpense:()=>{ if(!self.state.drafts.expense.amount||!activeBiz) return; self.add('expense','expenses',{business:activeBiz.name}); },
+      // health
+      healthRing, healthColor, healthLabel, goalWidth:Math.round(goalRatio*100)+'%',
+      // ai
+      runAI:()=>self.runAI(), aiEmpty: !S.aiInsight && !S.aiLoading, aiLoading:S.aiLoading, aiReady: !!S.aiInsight && !S.aiLoading, aiInsight:S.aiInsight,
+      // charts
+      lineChart:this.buildLine(), pieChart:this.buildPie(), barChart:this.buildBar(),
+      // dashboard upcoming
+      upcoming30, upcomingEmpty: upcoming30.length===0,
+      // rows + empties
+      incomeRows, incomeEmpty:incomeRows.length===0, expenseRows, expenseEmpty:expenseRows.length===0,
+      clientRows, clientEmpty:clientRows.length===0, invoiceRows, goalRows, goalEmpty:goalRows.length===0,
+      assetRows, debtRows, cashflowRows, cashflowEmpty:cashflowRows.length===0,
+      clientOptions,
+      // invoice detail
+      inv:invDetail, hasInvoiceSelected:!!selInv, noInvoiceSelected:!selInv,
+      toggleInvoicePaid: selInv ? ()=>self.setState(prev=>({invoices:prev.invoices.map(x=>x.id===selInv.id?Object.assign({},x,{status:x.status==='betaald'?'open':'betaald'}):x)}),()=>self.persist()) : ()=>{},
+      printInvoice: ()=>window.print(),
+      // draft + binds
+      draft:S.drafts, bind,
+      addIncome:()=>{ if(!self.state.drafts.income.amount) return; self.add('income','income'); },
+      addExpense:()=>{ if(!self.state.drafts.expense.amount) return; self.add('expense','expenses'); },
+      addClient:()=>{ if(!self.state.drafts.client.name) return; self.add('client','clients'); },
+      addInvoice:()=>{ if(!self.state.drafts.invoice.amount) return; const id='inv'+Date.now(); self.setState(prev=>({ invoices:[Object.assign({id}, prev.drafts.invoice, {amount:parseFloat(prev.drafts.invoice.amount)||0, btw:parseFloat(prev.drafts.invoice.btw)||0})].concat(prev.invoices), drafts:Object.assign({},prev.drafts,{invoice:self.emptyDraftFor('invoice')}), selectedInvoice:id }),()=>self.persist()); },
+      addGoal:()=>{ if(!self.state.drafts.goal.title) return; self.add('goal','goals'); },
+      addAsset:()=>{ if(!self.state.drafts.asset.value) return; self.add('asset','assets'); },
+      addDebt:()=>{ if(!self.state.drafts.debt.value) return; self.add('debt','debts'); },
+      addCashflow:()=>{ if(!self.state.drafts.cashflow.amount) return; self.add('cashflow','cashflow'); },
+      // settings
+      settings:S.settings, setName:(e)=>self.setSetting('companyName',e.target.value), setKvk:(e)=>self.setSetting('kvk',e.target.value), setBtw:(e)=>self.setSetting('btw',e.target.value), setIban:(e)=>self.setSetting('iban',e.target.value), setAddress:(e)=>self.setSetting('address',e.target.value), setStart:(e)=>self.setSetting('startBalance',e.target.value), setTarget:(e)=>self.setSetting('monthlyTarget',e.target.value),
+      resetAll:()=>self.resetAll(),
+      // shared styles
+      iStyle, btnPrimary, btnGhost, btnMini, labStyle
+    };
+  }
+}
+</script>
+</body>
+</html>
